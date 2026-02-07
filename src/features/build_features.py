@@ -1,35 +1,31 @@
+import numpy as np
 import pandas as pd
 
 
-def add_lag_returns(df: pd.DataFrame, lags=(1, 3, 5)) -> pd.DataFrame:
+def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Add lagged return features.
+    Feature engineering for stock return prediction
     """
-    for lag in lags:
-        df[f"Return_Lag_{lag}"] = (
-            df.groupby("Ticker")["Close"].pct_change(lag)
-        )
-    return df
 
+    df = df.copy()
 
-def add_rolling_volatility(df: pd.DataFrame, window: int = 5) -> pd.DataFrame:
-    """
-    Add rolling volatility feature.
-    """
+    # Daily return
+    df["Return"] = df.groupby("Ticker")["Close"].pct_change()
+
+    # Lagged returns
+    df["Return_Lag_1"] = df.groupby("Ticker")["Return"].shift(1)
+    df["Return_Lag_3"] = df.groupby("Ticker")["Return"].shift(3)
+    df["Return_Lag_5"] = df.groupby("Ticker")["Return"].shift(5)
+
+    # Rolling volatility (5-day)
     df["Rolling_Volatility"] = (
-        df.groupby("Ticker")["Close"]
-        .pct_change()
-        .rolling(window)
+        df.groupby("Ticker")["Return"]
+        .rolling(window=5)
         .std()
+        .reset_index(level=0, drop=True)
     )
-    return df
 
+    # Volume change
+    df["Volume_Change"] = df.groupby("Ticker")["Volume"].pct_change()
 
-def add_volume_change(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Add daily volume change feature.
-    """
-    df["Volume_Change"] = (
-        df.groupby("Ticker")["Volume"].pct_change()
-    )
     return df

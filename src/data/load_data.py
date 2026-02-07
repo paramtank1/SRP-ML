@@ -1,40 +1,39 @@
 import pandas as pd
 
 
-def load_raw_data(filepath: str) -> pd.DataFrame:
+def load_stock_data(filepath: str) -> pd.DataFrame:
     """
-    Load raw stock price data from CSV.
+    Load and prepare stock price data.
+
+    Steps:
+    - Read CSV
+    - Parse Date column (UTC)
+    - Sort by Ticker and Date
+    - Create Next-Day Return target
+
+    Parameters
+    ----------
+    filepath : str
+        Path to dataset CSV
+
+    Returns
+    -------
+    pd.DataFrame
+        Prepared stock dataframe
     """
+
+    # Load dataset
     df = pd.read_csv(filepath)
-    return df
 
-
-def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Clean and prepare data for return prediction.
-    """
-    # Convert Date column to datetime
+    # Parse date and normalize timezone
     df["Date"] = pd.to_datetime(df["Date"], utc=True)
 
-    # Sort by stock and date (VERY IMPORTANT)
-    df = df.sort_values(by=["Ticker", "Date"])
+    # Sort correctly for time-series operations
+    df = df.sort_values(["Ticker", "Date"]).reset_index(drop=True)
 
-    # Drop rows with missing essential values
-    df = df.dropna(subset=["Close", "Ticker", "Date"])
-
-    return df
-
-
-def add_next_day_return(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Create Next-Day Return as target variable.
-    Return_t+1 = (Close_{t+1} - Close_t) / Close_t
-    """
+    # Target: next-day return
     df["Next_Day_Return"] = (
         df.groupby("Ticker")["Close"].shift(-1) - df["Close"]
     ) / df["Close"]
-
-    # Remove last row of each stock (no next day available)
-    df = df.dropna(subset=["Next_Day_Return"])
 
     return df
