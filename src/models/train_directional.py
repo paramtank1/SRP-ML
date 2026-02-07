@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 from src.data.load_data import load_stock_data
@@ -10,7 +10,7 @@ from src.features.build_features import build_features
 
 
 def main():
-    # Load data
+    # Load and prepare data
     df = load_stock_data("data/raw/Dataset.csv")
     df = build_features(df)
 
@@ -36,25 +36,24 @@ def main():
     X = X[valid_idx]
     y = y[valid_idx]
 
-    # Train-test split (time-aware)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=0.2,
-        shuffle=False
-    )
+    # Time-Series Cross Validation
+    tscv = TimeSeriesSplit(n_splits=5)
+    accuracies = []
 
-    # Train Logistic Regression
-    model = LogisticRegression(max_iter=1000)
-    model.fit(X_train, y_train)
+    for fold, (train_idx, test_idx) in enumerate(tscv.split(X), 1):
+        X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+        y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
-    # Predictions
-    y_pred = model.predict(X_test)
+        model = LogisticRegression(max_iter=1000)
+        model.fit(X_train, y_train)
 
-    # Evaluation
-    print("Accuracy:", accuracy_score(y_test, y_pred))
-    print("\nClassification Report:\n", classification_report(y_test, y_pred))
-    print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred)
+        accuracies.append(acc)
+
+        print(f"Fold {fold} Accuracy: {acc:.4f}")
+
+    print("\nAverage TimeSeries CV Accuracy:", sum(accuracies) / len(accuracies))
 
 
 if __name__ == "__main__":
