@@ -23,8 +23,11 @@ def main():
         "Return_Lag_3",
         "Return_Lag_5",
         "Rolling_Volatility",
-        "Volume_Change"
+        "Volume_Change",
+        "Momentum_5",
+        "Volatility_Regime"
     ]
+
 
     X = df[features]
     y = df["Direction"]
