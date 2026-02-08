@@ -34,6 +34,7 @@ Let me explain it clearly.
 
 ## Project Structure
 
+```
 SRP-ML/
 ├── data/
 │   └── raw/
@@ -41,10 +42,12 @@ SRP-ML/
 │
 ├── src/
 │   ├── data/
-│   │   └── load_data.py
+│   │   ├── load_data.py
+│   │   └── test_loader.py
 │   │
 │   ├── features/
-│   │   └── build_features.py
+│   │   ├── build_features.py
+│   │   └── test_features.py
 │   │
 │   └── models/
 │       ├── train_baseline.py
@@ -55,6 +58,8 @@ SRP-ML/
 │
 ├── requirements.txt
 └── README.md
+```
+
 
 ---
 
