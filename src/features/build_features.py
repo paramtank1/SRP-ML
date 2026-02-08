@@ -28,4 +28,19 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     # Volume change
     df["Volume_Change"] = df.groupby("Ticker")["Volume"].pct_change()
 
+    # 🔹 NEW FEATURE 1: Momentum (5-day cumulative return)
+    df["Momentum_5"] = (
+        df.groupby("Ticker")["Return"]
+        .rolling(window=5)
+        .sum()
+        .reset_index(level=0, drop=True)
+    )
+
+    # 🔹 NEW FEATURE 2: Volatility Regime (High / Low)
+    df["Volatility_Regime"] = np.where(
+        df["Rolling_Volatility"] > df["Rolling_Volatility"].median(),
+        1,
+        0
+    )
+
     return df
