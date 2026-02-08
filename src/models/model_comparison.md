@@ -1,58 +1,59 @@
 # Model Comparison: Directional Stock Prediction
 
-This section compares the performance of two models used for
-next-day stock direction (Up/Down) prediction.
+This section compares different models used for next-day
+stock direction (Up/Down) prediction.
+
+All models were evaluated using **TimeSeries K-Fold Cross Validation**
+to preserve temporal order and avoid future data leakage.
 
 ---
 
 ## Models Evaluated
 
-- Logistic Regression (Baseline)
-- Random Forest Classifier
-
-Both models were evaluated using **TimeSeries K-Fold Cross Validation**
-to avoid future data leakage.
+1. Logistic Regression (Baseline)
+2. Random Forest (Base Features)
+3. Random Forest (Enhanced Features)
 
 ---
 
 ## Cross-Validation Results
 
-| Model               | Average CV Accuracy |
-|--------------------|--------------------|
-| Logistic Regression | ~0.504 |
-| Random Forest       | ~0.517 |
+| Model | Feature Set | Average CV Accuracy |
+|------|------------|--------------------|
+| Logistic Regression | Lagged returns, volatility, volume | ~0.504 |
+| Random Forest | Base features | ~0.517 |
+| Random Forest | Enhanced features (Momentum + Regime) | ~0.519 |
 
 ---
 
-## Observations
+## Key Observations
 
-- Random Forest outperforms Logistic Regression by capturing
-  non-linear relationships in the data.
-- Logistic Regression serves as a strong baseline but is limited
-  to linear decision boundaries.
-- Performance gains are modest, which is expected due to the
-  noisy and weakly predictable nature of financial markets.
+- Random Forest consistently outperformed Logistic Regression,
+  indicating the presence of non-linear relationships.
+- Feature enhancement led to a measurable improvement in model
+  performance, even in a noisy financial dataset.
+- The overall accuracy remains close to random guessing, which
+  aligns with the weak-form efficiency of stock markets.
 
 ---
 
-## Feature Importance (Random Forest)
+## Feature Importance (Final Random Forest)
 
-| Feature              | Importance |
-|----------------------|------------|
-| Return_Lag_5         | High |
-| Volume_Change        | High |
-| Return_Lag_1         | Medium |
-| Rolling_Volatility   | Medium |
-| Return_Lag_3         | Low |
+| Feature | Importance |
+|-------|------------|
+| Return_Lag_5 | High |
+| Volume_Change | High |
+| Momentum_5 | Medium–High |
+| Return_Lag_1 | Medium |
+| Rolling_Volatility | Medium |
+| Return_Lag_3 | Low |
+| Volatility_Regime | Very Low |
 
-This indicates that medium-term momentum and volume dynamics
-play a more significant role in directional prediction.
+Momentum emerged as a strong predictive feature, confirming the
+importance of short-term trend information in directional prediction.
 
 ---
 
 ## Conclusion
 
-Although prediction accuracy remains close to random guessing,
-the Random Forest model demonstrates improved stability and
-better utilization of engineered features, making it more
-suitable for further experimentation and feature enhancement.
+While absolute prediction
