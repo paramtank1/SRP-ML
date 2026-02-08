@@ -25,27 +25,36 @@ techniques suitable for financial datasets.
 
 ## Project Structure
 
+Great question — and honestly, this is a **very good sign** that you’re reviewing your GitHub view critically 👍
+Nothing is *wrong* here. What you’re seeing is a **formatting + design choice issue**, not a code or Git problem.
+
+Let me explain it clearly.
+
+---
+
+## Project Structure
+
 SRP-ML/
-│
 ├── data/
-│ └── raw/
-│ └── Dataset.csv
+│   └── raw/
+│       └── Dataset.csv
 │
 ├── src/
-│ ├── data/
-│ │ └── load_data.py
-│ ├── features/
-│ │ └── build_features.py
-│ └── models/
-│ ├── train_baseline.py
-│ ├── train_directional.py
-│ ├── train_rf_directional.py
-│ ├── model_comparison.md
-│ └── final_conclusion.md
+│   ├── data/
+│   │   └── load_data.py
+│   │
+│   ├── features/
+│   │   └── build_features.py
+│   │
+│   └── models/
+│       ├── train_baseline.py
+│       ├── train_directional.py
+│       ├── train_rf_directional.py
+│       ├── model_comparison.md
+│       └── final_conclusion.md
 │
 ├── requirements.txt
 └── README.md
-
 
 ---
 
